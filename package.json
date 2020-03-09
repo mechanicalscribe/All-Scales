@@ -1,0 +1,30 @@
+{
+  "name": "all-scales",
+  "version": "0.0.1",
+  "description": "Every possible scale in intervals of 1, 2 or 3 half-steps",
+  "main": "index.js",
+  "scripts": {
+    "build": "bundle-module --entry=./index.js --name=script --env=node --output_dir=.",
+    "build_verbose": "bundle-module --entry=./index.js --name=script --env=node --output_dir=. --verbose",
+    "minify": "bundle-module --entry=./index.js --name=script-min --env=node --output_dir=. --min",
+    "watch": "bundle-module --entry=./index.js --name=script --env=node --output_dir=. --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mechanicalscribe/All-Scales.git"
+  },
+  "keywords": [
+    "music"
+  ],
+  "author": "Chris Wilson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mechanicalscribe/All-Scales/issues"
+  },
+  "homepage": "https://github.com/mechanicalscribe/All-Scales#readme",
+  "dependencies": {
+    "d3-selection": "^1.4.1",
+    "d3-transition": "^1.3.2",
+    "vexflow": "^1.2.89"
+  }
+}
