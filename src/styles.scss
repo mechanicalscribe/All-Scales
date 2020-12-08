@@ -1,5 +1,10 @@
+body {
+	font-family: Arial;
+	font-size: 16px;
+}
+
 #scales {
-	width: 800px;
+	width: 900px;
 }
 
 .noselect {
@@ -12,3 +17,27 @@
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
+.control_button {
+	font-size: 30px;
+	display: inline-block;
+}
+
+.scale {
+	position: relative;
+
+	.scale_title {
+		position: absolute;
+		top: 10px;
+		font-weight: bold;
+	}
+
+	.scale_render > div {
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	.play_button {
+		font-size: 60px;
+		line-height: 137px;
+	}
+}
