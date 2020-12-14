@@ -21,11 +21,6 @@ Object.entries(scale_names).forEach(d => {
 console.log(byName);
 
 const NOTES = [
-	{ name: "G3",  base: "G", n: "g/3", f: "abb/3", s: "f##/3" },
-	{ name: "Ab3", base: "A", n: null,  f: "ab/3",  s: "g#/3"  },
-	{ name: "A3",  base: "A", n: "a/3", f: "abb/3", s: "g##/3" },
-	{ name: "Bb3", base: "B", n: null,  f: "bb/3",  s: "a#/3"  },
-	{ name: "B3",  base: "B", n: "b/3", f: "cb/4",  s: "a##/3" },
 	{ name: "C4",  base: "C", n: "c/4", f: "dbb/4", s: "b#/3"  },
 	{ name: "Db4", base: "D", n: null,  f: "db/4",  s: "c#/4"  },
 	{ name: "D4",  base: "D", n: "d/4", f: "ebb/4", s: "c##/4" },
@@ -45,29 +40,34 @@ const NOTES = [
 	{ name: "E5",  base: "E", n: "e/5", f: "fb/5",  s: "d##/5" },
 	{ name: "F5",  base: "F", n: "f/5", f: "gbb/5", s: "e#/5"  },
 	{ name: "Gb5", base: "G", n: null,  f: "gb/5",  s: "f#/5"  },
-	{ name: "G5",  base: "G", n: "g/5", f: "abb/5", s: "f##/5" }
+	{ name: "G5",  base: "G", n: "g/5", f: "abb/5", s: "f##/5" },
+	{ name: "Ab5", base: "A", n: null,  f: "ab/5",  s: "g#/5"  },
+	{ name: "A5",  base: "A", n: "a/5", f: "abb/5", s: "g##/5" },
+	{ name: "Bb5", base: "B", n: null,  f: "bb/5",  s: "a#/5"  },
+	{ name: "B5",  base: "B", n: "b/5", f: "cb/5",  s: "a##/5" },
+	{ name: "C6",  base: "C", n: "c/6", f: "dbb/6", s: "b#/5"  }
 ];
 
 // console.log(NOTES);
 
 const KEYS = {
-	"G":  [ 0, "sharp"  ],
-	"G#": [ 1, "sharp"  ],
-	"Ab": [ 1, "flat"   ],
-	"A":  [ 2, "sharp"  ],
-	"A#": [ 3, "sharp"  ],
-	"Bb": [ 3, "flat"   ],
-	"B":  [ 4, "sharp"  ],
-	"C":  [ 5, "flat"   ],
-	"C#": [ 6, "sharp"  ],
-	"Db": [ 6, "flat"   ],
-	"D":  [ 7, "sharp"  ],
-	"D#": [ 8, "sharp"  ],
-	"Eb": [ 8, "flat"   ],
-	"E":  [ 9, "sharp"  ],
-	"F":  [ 10, "flat"  ],
-	"F#": [ 11, "sharp" ],
-	"Gb": [ 11, "flat"  ]
+	"C":  [ 0, "flat"   ],
+	"C#": [ 1, "sharp"  ],
+	"Db": [ 1, "flat"   ],
+	"D":  [ 2, "sharp"  ],
+	"D#": [ 3, "sharp"  ],
+	"Eb": [ 3, "flat"   ],
+	"E":  [ 4, "sharp"  ],
+	"F":  [ 5, "flat"  ],
+	"F#": [ 6, "sharp" ],
+	"Gb": [ 6, "flat"  ],
+	"G":  [ 7, "sharp"  ],
+	"G#": [ 8, "sharp"  ],
+	"Ab": [ 8, "flat"   ],
+	"A":  [ 9, "sharp"  ],
+	"A#": [ 10, "sharp"  ],
+	"Bb": [ 10, "flat"   ],
+	"B":  [ 11, "sharp"  ]
 };
 
 NOTES.forEach(function(d, i) {
@@ -148,7 +148,6 @@ function drawScale(scale_number, key) {
 		if (c == 0 || mode !== "flat") {
 			note = NOTES[n].canonical[mode];
 		} else {
-			// console.log(previous.base, NOTES[n].base)
 			if (previous.base === NOTES[n].base) {
 				note = NOTES[n].natural;
 			} else {
@@ -159,8 +158,6 @@ function drawScale(scale_number, key) {
 		notes.push(note);
 		previous = note.data;
 	}
-
-	// console.log(notes);	
 
 	// let time = scale.length + "/4";
 	// let time = "3/4";
@@ -187,13 +184,11 @@ function drawScale(scale_number, key) {
 	let context = renderer.getContext();
 
 	let stave = new VF.Stave(5, 10, 760, {
-		space_above_staff_ln: 3.5,
+		space_above_staff_ln: 4.5,
 		left_bar: false
 	});
 
 	stave.addClef('treble'); //.addTimeSignature(time);
-
-	const startX = stave.getNoteStartX();
 
 	stave.setContext(context).draw();
 
@@ -204,11 +199,15 @@ function drawScale(scale_number, key) {
 	let voice = new VF.Voice({ num_beats: scale.length, beat_value: 4 });
 	voice.addTickables(notes);
 
-	stave.setNoteStartX(50);
+	const START_X = 50;
+	const TARGET = stave.width - START_X * 2;
 
-	// let formatter = new VF.Formatter().format([voice], scale.length * 50 );
-	let formatter = new VF.Formatter().format([voice], 500 );
-	// formatter.formatToStave([voice], stave, 500);
+	stave.setNoteStartX(START_X);
+
+	let formatter = new VF.Formatter().format([voice], TARGET + TARGET / (scale.length - 1) );
+	// let formatter = new VF.Formatter().format([voice], (scale.length - 0) * 60 );
+	// let formatter = new VF.Formatter().format([voice], 600 );
+	// formatter.formatToStave([voice], stave);
 
 	voice.draw(context, stave);
 
@@ -244,10 +243,14 @@ function drawScale(scale_number, key) {
 		}
 	}
 
-	let O = null;
-	let W = null;
-	let T = 22;
-	let B = 3;
+	const BBox = stave.getBoundingBox();
+
+	const INTERVAL = {
+		y: null,
+		w: null,
+		h: 22,
+		m: 3 // margin between spacers and boxes
+	};
 
 	const PALETTE = ['#ffffa1', '#ffeb99', '#ffd891', '#ffc489', '#ffb081', '#ff9c79', '#ff8971', '#ff7569'];
 	const COLORS = [
@@ -256,8 +259,8 @@ function drawScale(scale_number, key) {
 		PALETTE[5]
 	];
 
-	nodes.forEach((node, n) => {
-		let note = notes[n];
+	notes.forEach((note, n) => {
+		let node = note.attrs.el;
 
 		node.setAttribute("data-note", note.name);
 
@@ -265,31 +268,28 @@ function drawScale(scale_number, key) {
 			playNote(n, 500);
 		});
 
-		const head = select(node).select(".vf-notehead");
-
-		if (n < nodes.length - 1) {
-			const headNext = select(nodes[n + 1]).select(".vf-notehead");
-			const interval = intervals[n + 1];
+		if (n < notes.length - 1) {
+			let interval = intervals[n + 1];
 
 			const p = [
-				head.node().getBBox(),
-				headNext.node().getBBox()
+				note.getBoundingBox(),
+				notes[n + 1].getBoundingBox()
 			];
 
 			const L = p[1].x - p[0].x;
 
 			if (n === 0) {
-				W = p[0].width / 2;
-				O = p[0].y + W + 16;
+				INTERVAL.y = Math.max(100, p[0].y + p[0].h + 5); // 100 in the minimum, spaced under F4 so as not to collide with stave
+				INTERVAL.w = p[0].w / 2;
 			}
 
-			const path = `M${ p[0].x + W },${ O }v${ T }M${ p[1].x + W },${ O }v${ T }`;
+			const path = `M${ p[0].x + INTERVAL.w },${ INTERVAL.y }v${ INTERVAL.h }M${ p[0].x + INTERVAL.w + L },${ INTERVAL.y }v${ INTERVAL.h }`;
 
 			const bracketBox = intervalLines.append("rect")
-				.attr("x", p[0].x + W)
-				.attr("y", O + B)
+				.attr("x", p[0].x + INTERVAL.w)
+				.attr("y", INTERVAL.y + INTERVAL.m)
 				.attr("width", L)
-				.attr("height", T - B * 2)
+				.attr("height", INTERVAL.h - INTERVAL.m * 2)
 				.style("fill", COLORS[interval - 1]);
 
 			const bracket = intervalLines.append("path")
@@ -297,8 +297,8 @@ function drawScale(scale_number, key) {
 				.attr("class", "bracket");
 
 			const intervalNumber = intervalLines.append("text")
-				.attr("x", p[0].x + L / 2 + W / 2)
-				.attr("y", O + T / 2 + B)
+				.attr("x", p[0].x + L / 2 + INTERVAL.w / 2)
+				.attr("y", INTERVAL.y + INTERVAL.h / 2 + INTERVAL.m)
 				.attr("class", "intervalNumber")
 				.text(interval);
 		}
@@ -310,7 +310,7 @@ function drawScale(scale_number, key) {
 
 	play_button.addEventListener("click", function() {
 		console.log(scale);
-		playScale(500, 500);
+		playScale(250, 500);
 	});
 
 	return {
@@ -321,7 +321,9 @@ function drawScale(scale_number, key) {
 	}
 }
 
-let scale = drawScale(2, "A");
-drawScale("major", "F#");
-drawScale("blues", "G");
-drawScale("major", "Eb");
+let scale = drawScale(2, "Gb");
+drawScale("major", "C");
+drawScale(730, "B");
+drawScale("blues", "G#");
+drawScale(scales.length - 1, "F");
+// drawScale("minor", "Eb");
