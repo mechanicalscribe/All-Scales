@@ -19,3 +19,15 @@ We want `mp3` files for maximum [browser compatibility](https://blog.filestack.c
 You can format them all with `./samples/format.sh`. This will create three samples for each of the 88 notes: a 500ms, 1-second and 2-second version, all `mp3`s.
 
 
+## The piano keyboard
+
+The spacing of the black keys is available [here](http://www.quadibloc.com/other/cnv05.htm);
+
+
+# TO DO
+
+-- Control panel
+-- Keyboard
+-- Show intervals
+-- Guess when F should be E#, etc.
+-- Search by name

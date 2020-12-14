@@ -4,6 +4,8 @@ import Vex from 'vexflow';
 
 const VF = Vex.Flow;
 
+Vex.Flow.Formatter.DEBUG = true;
+
 const scales = require("./data/scales.json");
 const scale_names = require("./data/scale_names.json");
 
@@ -17,7 +19,6 @@ Object.entries(scale_names).forEach(d => {
 });
 
 console.log(byName);
-
 
 const NOTES = [
 	{ name: "G3",  base: "G", n: "g/3", f: "abb/3", s: "f##/3" },
@@ -47,7 +48,7 @@ const NOTES = [
 	{ name: "G5",  base: "G", n: "g/5", f: "abb/5", s: "f##/5" }
 ];
 
-console.log(NOTES);
+// console.log(NOTES);
 
 const KEYS = {
 	"G":  [ 0, "sharp"  ],
@@ -126,8 +127,6 @@ function drawScale(scale_number, key) {
 
 	let scale_name = scale_names[String(scale_number)] ? scale_names[String(scale_number)][0] : null;
 
-	console.log(scale_number, scale_name);
-
 	let intervals = scales[scale_number];
 
 	// https://stackoverflow.com/questions/20477177/creating-an-array-of-cumulative-sum-in-javascript
@@ -136,7 +135,7 @@ function drawScale(scale_number, key) {
 		return r;
 	}, []);
 
-	console.log(intervals, scale);
+	// console.log(intervals, scale);
 
 	// if consecutive notes have the same base and the first is flat, add a natural sign
 
@@ -149,7 +148,7 @@ function drawScale(scale_number, key) {
 		if (c == 0 || mode !== "flat") {
 			note = NOTES[n].canonical[mode];
 		} else {
-			console.log(previous.base, NOTES[n].base)
+			// console.log(previous.base, NOTES[n].base)
 			if (previous.base === NOTES[n].base) {
 				note = NOTES[n].natural;
 			} else {
@@ -161,9 +160,10 @@ function drawScale(scale_number, key) {
 		previous = note.data;
 	}
 
-	console.log(notes);	
+	// console.log(notes);	
 
-	let time = scale.length + "/4";
+	// let time = scale.length + "/4";
+	// let time = "3/4";
 
 	let div = document.createElement("div");
 	div.id = "scale_" + scale_id;
@@ -171,35 +171,48 @@ function drawScale(scale_number, key) {
 	div.innerHTML = template({
 		scale: {
 			scale_id: scale_id,
-			scale_name: scale_name
+			scale_name: scale_name,
+			scale_number: scale_number
 		}
 	});
+
 	scaleContainer.append(div);
 
 	let container = document.querySelector("#scale_" + scale_id + " .staff");
 	let play_button = document.querySelector("#scale_" + scale_id + " .play_button");
 
 	const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
-	renderer.resize(780, 150);
+	renderer.resize(780, 180);
+
 	let context = renderer.getContext();
 
-	let stave = new VF.Stave(10, 10, 760);
-	stave.addClef('treble').addTimeSignature(time);
+	let stave = new VF.Stave(5, 10, 760, {
+		space_above_staff_ln: 3.5,
+		left_bar: false
+	});
+
+	stave.addClef('treble'); //.addTimeSignature(time);
+
+	const startX = stave.getNoteStartX();
 
 	stave.setContext(context).draw();
 
-	let voice = new VF.Voice({num_beats: scale.length, beat_value: 4});
+	const svg = select("#scale_" + scale_id + " svg");
+
+	const intervalLines = svg.append("g").attr("id", "intervalLines");
+
+	let voice = new VF.Voice({ num_beats: scale.length, beat_value: 4 });
 	voice.addTickables(notes);
 
-	let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 750);
+	stave.setNoteStartX(50);
 
-	formatter.joinVoices([voice]).formatToStave([voice], stave);	
+	// let formatter = new VF.Formatter().format([voice], scale.length * 50 );
+	let formatter = new VF.Formatter().format([voice], 500 );
+	// formatter.formatToStave([voice], stave, 500);
 
 	voice.draw(context, stave);
 
 	let nodes = document.querySelectorAll(`#scale_${ scale_id } .vf-stavenote`);
-
-	console.log(nodes);
 
 	function playNote(index, duration) {
 		let note = notes[index];
@@ -231,14 +244,67 @@ function drawScale(scale_number, key) {
 		}
 	}
 
+	let O = null;
+	let W = null;
+	let T = 22;
+	let B = 3;
+
+	const PALETTE = ['#ffffa1', '#ffeb99', '#ffd891', '#ffc489', '#ffb081', '#ff9c79', '#ff8971', '#ff7569'];
+	const COLORS = [
+		PALETTE[1],
+		PALETTE[3],
+		PALETTE[5]
+	];
+
 	nodes.forEach((node, n) => {
 		let note = notes[n];
-		console.log(note);
+
 		node.setAttribute("data-note", note.name);
 
 		node.addEventListener("click", function() {
 			playNote(n, 500);
 		});
+
+		const head = select(node).select(".vf-notehead");
+
+		if (n < nodes.length - 1) {
+			const headNext = select(nodes[n + 1]).select(".vf-notehead");
+			const interval = intervals[n + 1];
+
+			const p = [
+				head.node().getBBox(),
+				headNext.node().getBBox()
+			];
+
+			const L = p[1].x - p[0].x;
+
+			if (n === 0) {
+				W = p[0].width / 2;
+				O = p[0].y + W + 16;
+			}
+
+			const path = `M${ p[0].x + W },${ O }v${ T }M${ p[1].x + W },${ O }v${ T }`;
+
+			const bracketBox = intervalLines.append("rect")
+				.attr("x", p[0].x + W)
+				.attr("y", O + B)
+				.attr("width", L)
+				.attr("height", T - B * 2)
+				.style("fill", COLORS[interval - 1]);
+
+			const bracket = intervalLines.append("path")
+				.attr("d", path)
+				.attr("class", "bracket");
+
+			const intervalNumber = intervalLines.append("text")
+				.attr("x", p[0].x + L / 2 + W / 2)
+				.attr("y", O + T / 2 + B)
+				.attr("class", "intervalNumber")
+				.text(interval);
+		}
+
+
+
 
 	});
 
@@ -255,7 +321,7 @@ function drawScale(scale_number, key) {
 	}
 }
 
-let scale = drawScale(2, "C");
+let scale = drawScale(2, "A");
 drawScale("major", "F#");
-drawScale("major", "Gb");
-drawScale("major", "F");
+drawScale("blues", "G");
+drawScale("major", "Eb");
