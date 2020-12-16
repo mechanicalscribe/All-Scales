@@ -4,7 +4,7 @@ body {
 }
 
 #scales {
-	width: 900px;
+	width: 800px;
 }
 
 .noselect {
@@ -20,25 +20,55 @@ body {
 .control_button {
 	font-size: 30px;
 	display: inline-block;
+	background-color: white;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	border-radius: 4px;
+	padding-bottom: 5px;
+	line-height: 25px;
+}
+
+.control_toggle {
+
+}
+
+.control_panel {
+	background-color: #EEE;
 }
 
 .scale {
 	position: relative;
+	margin: 10px 0;
+	border: 1px solid #CCC;
+	border-radius: 5px;
+	padding: 10px 0;
 
-	.scale_title {
-		position: absolute;
-		top: 10px;
-		font-weight: bold;
+	.scale_header {		
+		&> div {
+			line-height: 30px;
+			display: inline-block;
+			vertical-align: top;
+		}
 	}
 
-	.scale_render > div {
-		display: inline-block;
-		vertical-align: top;
+	.scale_title {
+		font-weight: bold;
+		margin-top: 2px;
+	}
+
+	.scale_render {
+		text-align: center;
+		margin: 0 auto;
+
+		background-image: url("../img/parchment_light.jpg");
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
 	}
 
 	.play_button {
-		font-size: 50px;
-		line-height: 127px;
+		font-size: 40px;
 	}
 
 	.bracket {

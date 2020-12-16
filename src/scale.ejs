@@ -1,8 +1,9 @@
 
-<div class="scale_title">
-	SCALE <%= scale.scale_number %><% if (scale.scale_name) { %>: "<%= scale.scale_name %>"<% } %>
-</div>
-<div class="scale_render">
+<div class="scale_header">
 	<div class="play_button">&blacktriangleright;</div>
+	<div class="scale_title">SCALE #<%= scale.scale_number %><% if (scale.scale_name) { %>: "<%= scale.scale_name %>"<% } %></div>
+</div>
+
+<div class="scale_render">
 	<div class="staff"></div>
 </div>

@@ -8,6 +8,7 @@ Vex.Flow.Formatter.DEBUG = true;
 
 const scales = require("./data/scales.json");
 const scale_names = require("./data/scale_names.json");
+const NOTES = require("./data/notes.json");
 
 const template = require("./src/scale.ejs");
 import "./src/styles.scss";
@@ -18,39 +19,7 @@ Object.entries(scale_names).forEach(d => {
 	byName[d[1][1]] = d[0];
 });
 
-console.log(byName);
-
-const NOTES = [
-	{ name: "C4",  base: "C", n: "c/4", f: "dbb/4", s: "b#/3"  },
-	{ name: "Db4", base: "D", n: null,  f: "db/4",  s: "c#/4"  },
-	{ name: "D4",  base: "D", n: "d/4", f: "ebb/4", s: "c##/4" },
-	{ name: "Eb4", base: "E", n: null,  f: "eb/4",  s: "d#/4"  },
-	{ name: "E4",  base: "E", n: "e/4", f: "fb/4",  s: "d##/4" },
-	{ name: "F4",  base: "F", n: "f/4", f: "gbb/4", s: "e#/4"  },
-	{ name: "Gb4", base: "G", n: null,  f: "gb/4",  s: "f#/4"  },
-	{ name: "G4",  base: "G", n: "g/4", f: "abb/4", s: "f##/4" },
-	{ name: "Ab4", base: "A", n: null,  f: "ab/4",  s: "g#/4"  },
-	{ name: "A4",  base: "A", n: "a/4", f: "bbb/4", s: "g##/4" },
-	{ name: "Bb4", base: "B", n: null,  f: "bb/4",  s: "a#/4"  },
-	{ name: "B4",  base: "B", n: "b/4", f: "cb/4",  s: "a##/4" },
-	{ name: "C5",  base: "C", n: "c/5", f: "dbb/5", s: "b#/4"  },
-	{ name: "Db5", base: "D", n: null,  f: "db/5",  s: "c#/5"  },
-	{ name: "D5",  base: "D", n: "d/5", f: "ebb/5", s: "c##/5" },
-	{ name: "Eb5", base: "E", n: null,  f: "eb/5",  s: "d#/5"  },
-	{ name: "E5",  base: "E", n: "e/5", f: "fb/5",  s: "d##/5" },
-	{ name: "F5",  base: "F", n: "f/5", f: "gbb/5", s: "e#/5"  },
-	{ name: "Gb5", base: "G", n: null,  f: "gb/5",  s: "f#/5"  },
-	{ name: "G5",  base: "G", n: "g/5", f: "abb/5", s: "f##/5" },
-	{ name: "Ab5", base: "A", n: null,  f: "ab/5",  s: "g#/5"  },
-	{ name: "A5",  base: "A", n: "a/5", f: "abb/5", s: "g##/5" },
-	{ name: "Bb5", base: "B", n: null,  f: "bb/5",  s: "a#/5"  },
-	{ name: "B5",  base: "B", n: "b/5", f: "cb/5",  s: "a##/5" },
-	{ name: "C6",  base: "C", n: "c/6", f: "dbb/6", s: "b#/5"  }
-];
-
-// console.log(NOTES);
-
-const KEYS = {
+const ROOTS = {
 	"C":  [ 0, "flat"   ],
 	"C#": [ 1, "sharp"  ],
 	"Db": [ 1, "flat"   ],
@@ -70,6 +39,10 @@ const KEYS = {
 	"B":  [ 11, "sharp"  ]
 };
 
+console.log(Object.keys(ROOTS));
+
+
+
 NOTES.forEach(function(d, i) {
 	let noteName = d.name;
 
@@ -81,17 +54,19 @@ NOTES.forEach(function(d, i) {
 
 	// StaveNotes for VF
 	
+	let stemDirection = d.k < 50 ? Vex.Flow.StaveNote.STEM_UP : Vex.Flow.StaveNote.STEM_DOWN;
+
 	// Natural note (white key) with natural sign
-	d.plain = d.n ? new VF.StaveNote({ clef: "treble", keys: [ d.n ], duration: "4" }) : null;
-	d.natural = d.n ? new VF.StaveNote({ clef: "treble", keys: [ d.n ], duration: "4" }).addAccidental(0, new VF.Accidental("n")) : null;
+	d.plain = d.natural ? new VF.StaveNote({ clef: "treble", keys: [ d.natural ], duration: "4", stem_direction: stemDirection }) : null;
+	d.natural = d.natural ? new VF.StaveNote({ clef: "treble", keys: [ d.natural ], duration: "4", stem_direction: stemDirection }).addAccidental(0, new VF.Accidental("n")) : null;
 
 	// flat
-	let accidental = d.f.split("/")[0].slice(1);
-	d.flat = new VF.StaveNote({ clef: "treble", keys: [ d.f ], duration: "4" }).addAccidental(0, new VF.Accidental(accidental));
+	let accidental = d.flat.split("/")[0].slice(1);
+	d.flat = new VF.StaveNote({ clef: "treble", keys: [ d.flat ], duration: "4", stem_direction: stemDirection }).addAccidental(0, new VF.Accidental(accidental));
 
 	// sharp
-	accidental = d.s.split("/")[0].slice(1);
-	d.sharp = new VF.StaveNote({ clef: "treble", keys: [ d.s ], duration: "4" }).addAccidental(0, new VF.Accidental(accidental));
+	accidental = d.sharp.split("/")[0].slice(1);
+	d.sharp = new VF.StaveNote({ clef: "treble", keys: [ d.sharp ], duration: "4", stem_direction: stemDirection }).addAccidental(0, new VF.Accidental(accidental));
 
 	// won't include 'bb' since those are all naturals
 	d.canonical = {
@@ -102,7 +77,7 @@ NOTES.forEach(function(d, i) {
 
 let scaleContainer = document.querySelector("#scales");
 
-function drawScale(scale_number, key) {
+const drawScale = function(scale_number, root) {
 	if (typeof scale_number == "undefined") {
 		console.log("Please pass a `scale_number` for this new scale");
 		return;
@@ -116,14 +91,14 @@ function drawScale(scale_number, key) {
 		}
 	}
 
-	if (!key) {
-		key = "C";
+	if (!root) {
+		root = "C";
 	}
 
-	const scale_id = scale_number + "_" + key.replace("#", "s");
+	const scale_id = scale_number + "_" + root.replace("#", "s");
 
-	const offset = KEYS[key][0];
-	const mode   = KEYS[key][1];
+	const offset = ROOTS[root][0] + 39;
+	const mode   = ROOTS[root][1];
 
 	let scale_name = scale_names[String(scale_number)] ? scale_names[String(scale_number)][0] : null;
 
@@ -179,12 +154,13 @@ function drawScale(scale_number, key) {
 	let play_button = document.querySelector("#scale_" + scale_id + " .play_button");
 
 	const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
-	renderer.resize(780, 180);
+	renderer.resize(780, 136);
 
 	let context = renderer.getContext();
 
 	let stave = new VF.Stave(5, 10, 760, {
-		space_above_staff_ln: 4.5,
+		space_above_staff_ln: 3.5,
+		// space_below_staff_ln: 2.5,
 		left_bar: false
 	});
 
@@ -302,10 +278,6 @@ function drawScale(scale_number, key) {
 				.attr("class", "intervalNumber")
 				.text(interval);
 		}
-
-
-
-
 	});
 
 	play_button.addEventListener("click", function() {
