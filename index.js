@@ -1,5 +1,6 @@
 import { select, selectAll, event } from 'd3-selection';
 import { transition, duration } from 'd3-transition';
+import { nanoid } from 'nanoid';
 import Vex from 'vexflow';
 
 const VF = Vex.Flow;
@@ -39,10 +40,6 @@ const ROOTS = {
 	"B":  [ 11, "sharp"  ]
 };
 
-console.log(Object.keys(ROOTS));
-
-
-
 NOTES.forEach(function(d, i) {
 	let noteName = d.name;
 
@@ -75,9 +72,84 @@ NOTES.forEach(function(d, i) {
 	};
 });
 
+const PALETTE = ['#ffffa1', '#ffeb99', '#ffd891', '#ffc489', '#ffb081', '#ff9c79', '#ff8971', '#ff7569'];
+const INTERVAL_COLORS = [
+	PALETTE[1],
+	PALETTE[3],
+	PALETTE[5]
+];
+
 let scaleContainer = document.querySelector("#scales");
 
-const drawScale = function(scale_number, root) {
+function Scale(scale_number, root) {
+	const that = this;
+	that.id = nanoid();
+	that.root = root || "C";
+
+	const div = document.createElement("div");
+	that.el = select(div);
+
+	div.id = "scale_" + that.id;
+	div.classList.add("scale");
+	div.innerHTML = template();
+
+	scaleContainer.append(div);
+
+	// build control panel
+
+	let keySelect = that.el.select(".key_select");
+
+	keySelect.selectAll("option")
+		.data(Object.keys(ROOTS))
+		.join("option")
+		.attr("value", d => {
+			return d;
+		})
+		.attr("selected", d => d === root ? "selected" : null)
+		.html(d => d);
+
+	that.el.select(".options_button").on("click", function() {
+		if (this.dataset.open === "false") {
+			that.el.select(".scale_options").style("display", "block");
+			this.innerHTML = "&minus;";
+			this.dataset.open = "true";
+		} else {
+			that.el.select(".scale_options").style("display", "none");
+			this.innerHTML = "&plus;";
+			this.dataset.open = "false";			
+		}
+	});
+
+	const container = document.querySelector("#scale_" + that.id + " .staff");
+	const play_button = document.querySelector("#scale_" + that.id + " .play_button");
+
+	play_button.addEventListener("click", function() {
+		console.log(that.scale);
+		if (that.scale) {
+			that.playScale(250, 500);
+		}
+	});
+
+
+	const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
+	renderer.resize(780, 136);
+
+	let context = that.context = renderer.getContext();
+
+	let stave = that.stave = new VF.Stave(5, 10, 760, {
+		space_above_staff_ln: 3.5,
+		left_bar: false
+	});
+
+	stave.addClef('treble'); //.addTimeSignature(time);
+
+	stave.setContext(context).draw();
+
+	that.drawScale(scale_number, root)
+}
+
+
+Scale.prototype.drawScale = function(scale_number, root) {
 	if (typeof scale_number == "undefined") {
 		console.log("Please pass a `scale_number` for this new scale");
 		return;
@@ -91,38 +163,42 @@ const drawScale = function(scale_number, root) {
 		}
 	}
 
-	if (!root) {
-		root = "C";
+	const that = this;
+
+	if (root) {
+		that.root = root; // already set to 'C' in constructor if unspecified
 	}
 
-	const scale_id = scale_number + "_" + root.replace("#", "s");
+	that.scale_number = scale_number;
+	that.scale_name = scale_names[String(scale_number)] ? scale_names[String(scale_number)][0] : null
+	that.slug = that.scale_number + "_" + that.root.replace("#", "s");
 
-	const offset = ROOTS[root][0] + 39;
-	const mode   = ROOTS[root][1];
+	// add name to template
+	that.el.select(".scale_title").html(`SCALE #${ that.scale_number }` + (that.scale_name ? (': "' + that.scale_name + '"') : ""));	
 
-	let scale_name = scale_names[String(scale_number)] ? scale_names[String(scale_number)][0] : null;
 
-	let intervals = scales[scale_number];
+
+	that.intervals = scales[scale_number];
 
 	// https://stackoverflow.com/questions/20477177/creating-an-array-of-cumulative-sum-in-javascript
-	let scale = intervals.reduce(function(r, a) {
+	that.scale = that.intervals.reduce(function(r, a) {
 		r.push((r.length && r[r.length - 1] || 0) + a);
 		return r;
-	}, []);
+	}, []);	
 
-	// console.log(intervals, scale);
+	const mode = ROOTS[that.root][1]; // sharps or flats
+	const offset = ROOTS[that.root][0] + 39;
 
-	// if consecutive notes have the same base and the first is flat, add a natural sign
-
-	let notes = [];
+	that.notes = [];
 	let previous;
 
-	for (let c = 0; c < scale.length; c += 1) {
-		let n = scale[c] + offset;
+	for (let c = 0; c < that.scale.length; c += 1) {
+		let n = that.scale[c] + offset;
 		let note;
 		if (c == 0 || mode !== "flat") {
 			note = NOTES[n].canonical[mode];
 		} else {
+			// if consecutive notes have the same base and the first is flat, add a natural sign
 			if (previous.base === NOTES[n].base) {
 				note = NOTES[n].natural;
 			} else {
@@ -130,96 +206,47 @@ const drawScale = function(scale_number, root) {
 			}
 		}
 		note.data = NOTES[n];
-		notes.push(note);
+		that.notes.push(note);
 		previous = note.data;
-	}
+	}	
 
-	// let time = scale.length + "/4";
-	// let time = "3/4";
-
-	let div = document.createElement("div");
-	div.id = "scale_" + scale_id;
-	div.classList.add("scale");
-	div.innerHTML = template({
-		scale: {
-			scale_id: scale_id,
-			scale_name: scale_name,
-			scale_number: scale_number
-		}
-	});
-
-	scaleContainer.append(div);
-
-	let container = document.querySelector("#scale_" + scale_id + " .staff");
-	let play_button = document.querySelector("#scale_" + scale_id + " .play_button");
-
-	const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
-	renderer.resize(780, 136);
-
-	let context = renderer.getContext();
-
-	let stave = new VF.Stave(5, 10, 760, {
-		space_above_staff_ln: 3.5,
-		// space_below_staff_ln: 2.5,
-		left_bar: false
-	});
-
-	stave.addClef('treble'); //.addTimeSignature(time);
-
-	stave.setContext(context).draw();
-
-	const svg = select("#scale_" + scale_id + " svg");
-
-	const intervalLines = svg.append("g").attr("id", "intervalLines");
-
-	let voice = new VF.Voice({ num_beats: scale.length, beat_value: 4 });
-	voice.addTickables(notes);
+	const voice = that.voice = new VF.Voice({ num_beats: that.scale.length, beat_value: 4 });
+	voice.addTickables(that.notes);
 
 	const START_X = 50;
-	const TARGET = stave.width - START_X * 2;
+	const TARGET = that.stave.width - START_X * 2;
 
-	stave.setNoteStartX(START_X);
+	that.stave.setNoteStartX(START_X);
 
-	let formatter = new VF.Formatter().format([voice], TARGET + TARGET / (scale.length - 1) );
+	let formatter = new VF.Formatter().format([voice], TARGET + TARGET / (that.scale.length - 1) );
 	// let formatter = new VF.Formatter().format([voice], (scale.length - 0) * 60 );
 	// let formatter = new VF.Formatter().format([voice], 600 );
 	// formatter.formatToStave([voice], stave);
 
-	voice.draw(context, stave);
+	voice.draw(that.context, that.stave);
 
-	let nodes = document.querySelectorAll(`#scale_${ scale_id } .vf-stavenote`);
+	// event listeners for click-to-play
 
-	function playNote(index, duration) {
-		let note = notes[index];
-		let node = nodes[index];
+	that.nodes = document.querySelectorAll("#scale_" + that.id + " .vf-stavenote")
 
-		if (duration !== 500 && duration !== 1000 && duration !== 2000) {
-			duration = 1000;
-		}
+	that.notes.forEach(function(note, n) {
+		const node = that.nodes[n];
 
-		let audio = note.data.audio[duration];
-		audio.play();
-		select(node).selectAll("path").style("fill", "red").style("stroke", "red").transition().duration(duration * 2).style("fill", "black").style("stroke", "black");
-	}
+		node.setAttribute("data-note", note.name);
 
-	function playScale(tempo, duration) {
+		node.addEventListener("click", function() {
+			that.playNote(n, 500);
+		});	
+	});
 
-		if (typeof tempo === "undefined") {
-			tempo = 1000;
-		}
+	that.drawIntervals();
 
-		if (!duration) {
-			duration = 1000;
-		}		
+}
 
-		for (let c = 0; c < scale.length; c += 1) {
-			setTimeout(function() {
-				playNote(c, duration);
-			}, tempo * c);
-		}
-	}
+Scale.prototype.drawIntervals = function() {
+	const that = this;
 
-	const BBox = stave.getBoundingBox();
+	const BBox = that.stave.getBoundingBox();
 
 	const INTERVAL = {
 		y: null,
@@ -228,28 +255,19 @@ const drawScale = function(scale_number, root) {
 		m: 3 // margin between spacers and boxes
 	};
 
-	const PALETTE = ['#ffffa1', '#ffeb99', '#ffd891', '#ffc489', '#ffb081', '#ff9c79', '#ff8971', '#ff7569'];
-	const COLORS = [
-		PALETTE[1],
-		PALETTE[3],
-		PALETTE[5]
-	];
+	const svg = select(that.context.svg);
 
-	notes.forEach((note, n) => {
-		let node = note.attrs.el;
+	const intervalLines = that.intervalLines = svg.append("g").attr("id", "intervalLines");
 
-		node.setAttribute("data-note", note.name);
+	that.notes.forEach((note, n) => {
+		let node = that.nodes[n];
 
-		node.addEventListener("click", function() {
-			playNote(n, 500);
-		});
-
-		if (n < notes.length - 1) {
-			let interval = intervals[n + 1];
+		if (n < that.notes.length - 1) {
+			let interval = that.intervals[n + 1];
 
 			const p = [
 				note.getBoundingBox(),
-				notes[n + 1].getBoundingBox()
+				that.notes[n + 1].getBoundingBox()
 			];
 
 			const L = p[1].x - p[0].x;
@@ -266,7 +284,7 @@ const drawScale = function(scale_number, root) {
 				.attr("y", INTERVAL.y + INTERVAL.m)
 				.attr("width", L)
 				.attr("height", INTERVAL.h - INTERVAL.m * 2)
-				.style("fill", COLORS[interval - 1]);
+				.style("fill", INTERVAL_COLORS[interval - 1]);
 
 			const bracket = intervalLines.append("path")
 				.attr("d", path)
@@ -279,23 +297,45 @@ const drawScale = function(scale_number, root) {
 				.text(interval);
 		}
 	});
+}
 
-	play_button.addEventListener("click", function() {
-		console.log(scale);
-		playScale(250, 500);
-	});
 
-	return {
-		intervals: intervals,
-		scale: scale,
-		notes: notes,
-		playScale: playScale
+Scale.prototype.playNote = function(index, duration) {
+	const that = this;
+
+	let note = that.notes[index];
+	let node = that.nodes[index];
+
+	if (duration !== 500 && duration !== 1000 && duration !== 2000) {
+		duration = 1000;
+	}
+
+	let audio = note.data.audio[duration];
+	audio.play();
+	select(node).selectAll("path").style("fill", "red").style("stroke", "red").transition().duration(duration * 2).style("fill", "black").style("stroke", "black");
+}
+
+Scale.prototype.playScale = function(tempo, duration) {
+	const that = this;
+
+	if (typeof tempo === "undefined") {
+		tempo = 1000;
+	}
+
+	if (!duration) {
+		duration = 1000;
+	}		
+
+	for (let c = 0; c < that.scale.length; c += 1) {
+		setTimeout(function() {
+			that.playNote(c, duration);
+		}, tempo * c);
 	}
 }
 
-let scale = drawScale(2, "Gb");
-drawScale("major", "C");
-drawScale(730, "B");
-drawScale("blues", "G#");
-drawScale(scales.length - 1, "F");
+let scale0 = new Scale(2, "Gb");
+let scale1 = new Scale("major", "C");
+let scale2 = new Scale(730, "B");
+// drawScale("blues", "G#");
+// drawScale(scales.length - 1, "F");
 // drawScale("minor", "Eb");

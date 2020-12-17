@@ -17,13 +17,17 @@ body {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
+button {
+	cursor: pointer;
+	outline: none;
+}
+
 .control_button {
 	font-size: 30px;
 	display: inline-block;
 	background-color: white;
 	width: 40px;
 	height: 40px;
-	cursor: pointer;
 	border-radius: 4px;
 	padding-bottom: 5px;
 	line-height: 25px;
@@ -44,17 +48,50 @@ body {
 	border-radius: 5px;
 	padding: 10px 0;
 
-	.scale_header {		
+	.scale_header {
+		margin-bottom: 10px;
+		position: relative;
+
 		&> div {
 			line-height: 30px;
 			display: inline-block;
 			vertical-align: top;
 		}
+
+		.scale_options_toggle {
+			position: absolute;
+			right: 10px;
+		}
+
+		.options_button {
+			font-size: 20px;
+			display: inline-block;
+			background-color: white;
+			width: 30px;
+			height: 30px;
+			cursor: pointer;
+			border: 1px solid #808080;
+			color: #606060;
+			border-radius: 4px;
+			padding-bottom: 5px;
+			line-height: 27px;
+			outline: none;
+		}		
 	}
 
 	.scale_title {
 		font-weight: bold;
 		margin-top: 2px;
+	}
+
+	.scale_options {
+		display: none;
+		padding: 5px;
+	}
+
+	select {
+		font-size: 20px;
+		outline: none;
 	}
 
 	.scale_render {
