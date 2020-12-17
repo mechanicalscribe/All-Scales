@@ -1,0 +1,3 @@
+[submodule "lib/interactive-tools"]
+	path = lib/interactive-tools
+	url = git@github.com:TimeMagazineLabs/interactive-tools.git

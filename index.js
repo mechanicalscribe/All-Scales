@@ -1,6 +1,7 @@
 import { select, selectAll, event } from 'd3-selection';
 import { transition, duration } from 'd3-transition';
 import { nanoid } from 'nanoid';
+import { inputs, selections } from './lib/interactive-tools';
 import Vex from 'vexflow';
 
 const VF = Vex.Flow;
@@ -96,17 +97,36 @@ function Scale(scale_number, root) {
 	scaleContainer.append(div);
 
 	// build control panel
+	let selectItems = Object.keys(ROOTS).map(d => {
+		return {
+			value: d.replace("#", "s"),
+			// label: d.replace("#", "&sharp;").replace(/b$/, "<span>&flat;</span>")
+			label: d.replace("#", "♯").replace(/b$/, "♭")
+		}
+	});
 
-	let keySelect = that.el.select(".key_select");
+	let selectedIndex = Object.keys(ROOTS).indexOf(that.root);
 
-	keySelect.selectAll("option")
-		.data(Object.keys(ROOTS))
-		.join("option")
-		.attr("value", d => {
-			return d;
-		})
-		.attr("selected", d => d === root ? "selected" : null)
-		.html(d => d);
+	that.rootDropdown = selections.makeStyleBox("#scale_" + that.id + " .key_select_container", selectItems, {
+		value_key: "value",
+		label_key: "label",
+		selected: that.root.replace("#", "s"),
+		onChange: function(val, html) {
+			console.log(val, html);
+
+			console.log(that.el.select("#scale_" + that.id + " .ss-selected-option").node().innerHTML);
+			// that.el.select("#scale_" + that.id + " .ss-selected-option").node().innerHTML = html;
+			that.drawScale(that.scale_number, html.replace("♯", "#").replace("♭", "b"));
+
+		}
+	});
+
+	// that.el.selectAll(".ss-option").html(function() {
+		// if (this.innerHTML.indexOf("♭") != -1) {
+		// 	this.innerHTML = this.innerHTML.replace("♭", "<span>♭</span>")
+		// }
+	// 	return this.innerHTML;
+	// })
 
 	that.el.select(".options_button").on("click", function() {
 		if (this.dataset.open === "false") {
@@ -145,7 +165,9 @@ function Scale(scale_number, root) {
 
 	stave.setContext(context).draw();
 
-	that.drawScale(scale_number, root)
+	if (typeof scale_number != "undefined") {
+		that.drawScale(scale_number, root)
+	}
 }
 
 
@@ -165,9 +187,13 @@ Scale.prototype.drawScale = function(scale_number, root) {
 
 	const that = this;
 
+	that.clear();
+
 	if (root) {
 		that.root = root; // already set to 'C' in constructor if unspecified
 	}
+
+	that.rootDropdown.setValue(that.root.replace("#", "s"));
 
 	that.scale_number = scale_number;
 	that.scale_name = scale_names[String(scale_number)] ? scale_names[String(scale_number)][0] : null
@@ -175,8 +201,6 @@ Scale.prototype.drawScale = function(scale_number, root) {
 
 	// add name to template
 	that.el.select(".scale_title").html(`SCALE #${ that.scale_number }` + (that.scale_name ? (': "' + that.scale_name + '"') : ""));	
-
-
 
 	that.intervals = scales[scale_number];
 
@@ -299,6 +323,19 @@ Scale.prototype.drawIntervals = function() {
 	});
 }
 
+Scale.prototype.clear = function() {
+	const that = this;
+	if (that.nodes) {
+		that.nodes.forEach(node => {
+			node.remove();
+		});
+	}
+
+	if (that.intervalLines) {
+		that.intervalLines.remove();
+	}
+}
+
 
 Scale.prototype.playNote = function(index, duration) {
 	const that = this;
@@ -306,12 +343,15 @@ Scale.prototype.playNote = function(index, duration) {
 	let note = that.notes[index];
 	let node = that.nodes[index];
 
-	if (duration !== 500 && duration !== 1000 && duration !== 2000) {
-		duration = 1000;
+	let sample = duration;
+
+	if (sample !== 500 && sample !== 1000 && sample !== 2000) {
+		sample = 1000;
 	}
 
-	let audio = note.data.audio[duration];
+	let audio = note.data.audio[sample];
 	audio.play();
+
 	select(node).selectAll("path").style("fill", "red").style("stroke", "red").transition().duration(duration * 2).style("fill", "black").style("stroke", "black");
 }
 
@@ -319,7 +359,7 @@ Scale.prototype.playScale = function(tempo, duration) {
 	const that = this;
 
 	if (typeof tempo === "undefined") {
-		tempo = 1000;
+		tempo = 500;
 	}
 
 	if (!duration) {
@@ -333,9 +373,14 @@ Scale.prototype.playScale = function(tempo, duration) {
 	}
 }
 
-let scale0 = new Scale(2, "Gb");
+let scale0 = new Scale();
 let scale1 = new Scale("major", "C");
 let scale2 = new Scale(730, "B");
 // drawScale("blues", "G#");
 // drawScale(scales.length - 1, "F");
 // drawScale("minor", "Eb");
+
+
+scale0.drawScale("blues", "F")
+
+scale1.drawScale(100, "D#")

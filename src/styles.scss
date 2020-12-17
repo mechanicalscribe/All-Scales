@@ -85,8 +85,35 @@ button {
 	}
 
 	.scale_options {
-		display: none;
+		/* display: none; */
 		padding: 5px;
+
+		&> div {
+			line-height: 36px;
+			display: inline-block;
+			vertical-align: top;			
+		}
+
+		.option_label {
+			font-weight: 700;
+		}
+
+		.key_select_container {
+			width: 64px;
+		}
+
+		.ss-dropdown {
+			max-height: 1000px;
+		}
+
+		.ss-selected-option {
+			text-align: center;
+		}
+
+		.style-select {
+			font-family: 'Courier New', sans-serif;
+			font-size: 20px;
+		}
 	}
 
 	select {
