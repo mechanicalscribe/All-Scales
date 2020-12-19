@@ -1,6 +1,9 @@
 {
-	"0":   [ "Chromatic Scale", "chromatic" ],
-	"617": [ "Diantonic Scale", "diantonic" ],
-	"686": [ "Major Scale", "major" ],
-	"871": [ "Hexantoic Blues Scale", "blues" ]
+	"1":   [ "Chromatic Scale", "chromatic" ],
+	"615": [ "Melodic Minor Scale", "melodic_minor" ],
+	"616": [ "Harmonic Minor Scale", "harmonic_minor" ],
+	"618": [ "Dorian Scale", "diantonic" ],
+	"619": [ "Natural Minor Scale", "natural_minor" ],
+	"687": [ "Major Scale", "major" ],
+	"872": [ "Hexantoic Blues Scale", "blues" ]
 }

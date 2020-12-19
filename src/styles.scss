@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IM+Fell+English:ital@0;1&display=swap');
+
+$green: #2ed22e;
+
+:export {
+	green: $green;
+}
+
 body {
 	font-family: Arial;
 	font-size: 16px;
@@ -22,23 +30,122 @@ button {
 	outline: none;
 }
 
-.control_button {
-	font-size: 30px;
-	display: inline-block;
-	background-color: white;
-	width: 40px;
-	height: 40px;
-	border-radius: 4px;
-	padding-bottom: 5px;
-	line-height: 25px;
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    opacity: 1;
 }
 
-.control_toggle {
-
+select {
+	font-size: 20px;
+	outline: none;
 }
 
-.control_panel {
-	background-color: #EEE;
+#control_panel {
+	.control_button {
+		font-size: 30px;
+		display: inline-block;
+		background-color: white;
+		width: 40px;
+		height: 40px;
+		border-radius: 4px;
+		padding-bottom: 5px;
+		line-height: 25px;
+	}
+
+	.control_toggle {
+
+	}
+
+	.control_panel {
+		background-color: #EEE;
+	}	
+}
+
+.scale_options {
+	/* display: none; */
+	padding: 5px;
+	margin-bottom: 10px;
+	position: relative;
+	font-family: 'IBM Plex Mono', monospace;;
+
+	&> div {
+		line-height: 30px;
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	.scale_options_toggle {
+		position: absolute;
+		right: 10px;
+		top: -5px;
+	}
+
+	.scale_option {
+		display: inline-block;
+		margin-right: 10px;
+
+		> div {
+			line-height: 40px;
+			display: inline-block;
+			vertical-align: top;
+		}
+	}
+
+	.play_button {
+		font-size: 60px;
+		margin-top: -7px;
+		color: $green;
+	}
+
+	.option_label {
+		font-weight: 700;
+	}
+
+	.key_select_container {
+		width: 64px;
+
+		.ss-dropdown {
+			max-height: 1000px;
+		}
+
+		.ss-selected-option {
+			text-align: center;
+			border: none;
+			background-image: none;
+		}
+
+		.style-select {
+			font-family: 'IBM Plex Mono', monospace;;
+			font-size: 20px;
+			margin-top: 4px;
+			border: none;
+			border-bottom: 2px solid black;
+		}
+	}
+
+	.scale_number_input {
+		font-family: 'IBM Plex Mono', monospace;;
+		font-size: 20px;
+		padding: 5px 0 4px 0;
+		width: 54px;
+		outline: none;
+		border: none;
+		border-bottom: 2px solid black;
+	}
+
+	.options_button {
+		font-size: 14px;
+		display: inline-block;
+		background-color: white;
+		width: 24px;
+		height: 24px;
+		cursor: pointer;
+		border: 1px solid #808080;
+		color: #606060;
+		border-radius: 4px;
+		line-height: 21px;
+		outline: none;
+	}	
 }
 
 .scale {
@@ -48,82 +155,10 @@ button {
 	border-radius: 5px;
 	padding: 10px 0;
 
-	.scale_header {
-		margin-bottom: 10px;
-		position: relative;
-
-		&> div {
-			line-height: 30px;
-			display: inline-block;
-			vertical-align: top;
-		}
-
-		.scale_options_toggle {
-			position: absolute;
-			right: 10px;
-		}
-
-		.options_button {
-			font-size: 20px;
-			display: inline-block;
-			background-color: white;
-			width: 30px;
-			height: 30px;
-			cursor: pointer;
-			border: 1px solid #808080;
-			color: #606060;
-			border-radius: 4px;
-			padding-bottom: 5px;
-			line-height: 27px;
-			outline: none;
-		}		
-	}
-
-	.scale_title {
-		font-weight: bold;
-		margin-top: 2px;
-	}
-
-	.scale_options {
-		/* display: none; */
-		padding: 5px;
-
-		&> div {
-			line-height: 36px;
-			display: inline-block;
-			vertical-align: top;			
-		}
-
-		.option_label {
-			font-weight: 700;
-		}
-
-		.key_select_container {
-			width: 64px;
-		}
-
-		.ss-dropdown {
-			max-height: 1000px;
-		}
-
-		.ss-selected-option {
-			text-align: center;
-		}
-
-		.style-select {
-			font-family: 'Courier New', sans-serif;
-			font-size: 20px;
-		}
-	}
-
-	select {
-		font-size: 20px;
-		outline: none;
-	}
-
 	.scale_render {
 		text-align: center;
 		margin: 0 auto;
+		position: relative;
 
 		background-image: url("../img/parchment_light.jpg");
 		background-size: cover;
@@ -131,8 +166,11 @@ button {
 		background-position: 50% 50%;
 	}
 
-	.play_button {
-		font-size: 40px;
+	.scale_title {
+		font-family: 'IM Fell English', serif;
+		font-size: 30px;
+		text-align: left;
+		padding: 10px 0 0 10px;
 	}
 
 	.bracket {

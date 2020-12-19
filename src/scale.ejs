@@ -1,15 +1,25 @@
-
-<div class="scale_header">
-	<div class="play_button">&blacktriangleright;</div>
-	<div class="scale_title"></div>
-	<div class="scale_options_toggle"><button class="options_button" data-open="false">&plus;</button></div>
-</div>
-
 <div class="scale_options">
-	<div class="option_label">ROOT </div>
-	<div class="key_select_container"></div>	
+	<div class="scale_option">	
+		<div class="play_button">&blacktriangleright;</div>
+	</div>
+	<div class="scale_option">
+		<div class="option_label">ROOT </div>
+		<div class="key_select_container"></div>	
+	</div>
+
+	<div class="scale_option">
+		<div class="option_label">SCALE NUMBER </div>
+		<div class="scale_number_container">
+			<input class="scale_number_input" type="number" min="1" max="927" />
+		</div>	
+	</div>
+
+	<div class="scale_options_toggle"><button class="close_button options_button" data-open="true">&#10005;</button></div>
+
 </div>
 
 <div class="scale_render">
+	<div class="scale_title"></div>
+
 	<div class="staff"></div>
 </div>

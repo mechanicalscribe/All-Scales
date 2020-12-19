@@ -12,13 +12,17 @@ const scales = require("./data/scales.json");
 const scale_names = require("./data/scale_names.json");
 const NOTES = require("./data/notes.json");
 
+console.log(scales);
+
 const template = require("./src/scale.ejs");
-import "./src/styles.scss";
+import STYLE_COLORS from "./src/styles.scss";
+
+console.log(STYLE_COLORS);
 
 const byName = {}
 
 Object.entries(scale_names).forEach(d => {
-	byName[d[1][1]] = d[0];
+	byName[d[1][1]] = +d[0] - 1;
 });
 
 const ROOTS = {
@@ -87,7 +91,7 @@ function Scale(scale_number, root) {
 	that.id = nanoid();
 	that.root = root || "C";
 
-	const div = document.createElement("div");
+	const div = that.div = document.createElement("div");
 	that.el = select(div);
 
 	div.id = "scale_" + that.id;
@@ -100,7 +104,6 @@ function Scale(scale_number, root) {
 	let selectItems = Object.keys(ROOTS).map(d => {
 		return {
 			value: d.replace("#", "s"),
-			// label: d.replace("#", "&sharp;").replace(/b$/, "<span>&flat;</span>")
 			label: d.replace("#", "♯").replace(/b$/, "♭")
 		}
 	});
@@ -112,23 +115,19 @@ function Scale(scale_number, root) {
 		label_key: "label",
 		selected: that.root.replace("#", "s"),
 		onChange: function(val, html) {
-			console.log(val, html);
-
-			console.log(that.el.select("#scale_" + that.id + " .ss-selected-option").node().innerHTML);
-			// that.el.select("#scale_" + that.id + " .ss-selected-option").node().innerHTML = html;
 			that.drawScale(that.scale_number, html.replace("♯", "#").replace("♭", "b"));
-
 		}
 	});
 
-	// that.el.selectAll(".ss-option").html(function() {
-		// if (this.innerHTML.indexOf("♭") != -1) {
-		// 	this.innerHTML = this.innerHTML.replace("♭", "<span>♭</span>")
-		// }
-	// 	return this.innerHTML;
-	// })
+	that.scaleNumberSelector = that.el.select("#scale_" + that.id + " .scale_number_input").node();
+
+	that.scaleNumberSelector.addEventListener("change", function(e, v) {
+		that.drawScale(+this.value - 1);
+	});
 
 	that.el.select(".options_button").on("click", function() {
+		scaleContainer.removeChild(that.div);
+		/*
 		if (this.dataset.open === "false") {
 			that.el.select(".scale_options").style("display", "block");
 			this.innerHTML = "&minus;";
@@ -138,18 +137,17 @@ function Scale(scale_number, root) {
 			this.innerHTML = "&plus;";
 			this.dataset.open = "false";			
 		}
+		*/
 	});
 
 	const container = document.querySelector("#scale_" + that.id + " .staff");
 	const play_button = document.querySelector("#scale_" + that.id + " .play_button");
 
 	play_button.addEventListener("click", function() {
-		console.log(that.scale);
 		if (that.scale) {
 			that.playScale(250, 500);
 		}
 	});
-
 
 	const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
 	renderer.resize(780, 136);
@@ -157,7 +155,7 @@ function Scale(scale_number, root) {
 	let context = that.context = renderer.getContext();
 
 	let stave = that.stave = new VF.Stave(5, 10, 760, {
-		space_above_staff_ln: 3.5,
+		space_above_staff_ln: 1.5,
 		left_bar: false
 	});
 
@@ -187,20 +185,20 @@ Scale.prototype.drawScale = function(scale_number, root) {
 
 	const that = this;
 
-	that.clear();
-
 	if (root) {
 		that.root = root; // already set to 'C' in constructor if unspecified
 	}
 
-	that.rootDropdown.setValue(that.root.replace("#", "s"));
-
 	that.scale_number = scale_number;
-	that.scale_name = scale_names[String(scale_number)] ? scale_names[String(scale_number)][0] : null
+	that.scale_name = scale_names[String(scale_number + 1)] ? scale_names[String(scale_number + 1)][0] : null
 	that.slug = that.scale_number + "_" + that.root.replace("#", "s");
 
+	that.rootDropdown.setValue(that.root.replace("#", "s"));
+	that.scaleNumberSelector.value = that.scale_number + 1;
+
 	// add name to template
-	that.el.select(".scale_title").html(`SCALE #${ that.scale_number }` + (that.scale_name ? (': "' + that.scale_name + '"') : ""));	
+	// `scale_number` is 0-indexed, so add one
+	that.el.select(".scale_title").html(`<strong>Scale #${ that.scale_number + 1 }` + (that.scale_name ? (': </strong>&ldquo;' + that.scale_name + '&rdquo;') : "") + " in " + that.root);	
 
 	that.intervals = scales[scale_number];
 
@@ -243,14 +241,14 @@ Scale.prototype.drawScale = function(scale_number, root) {
 	that.stave.setNoteStartX(START_X);
 
 	let formatter = new VF.Formatter().format([voice], TARGET + TARGET / (that.scale.length - 1) );
-	// let formatter = new VF.Formatter().format([voice], (scale.length - 0) * 60 );
-	// let formatter = new VF.Formatter().format([voice], 600 );
-	// formatter.formatToStave([voice], stave);
+
+	that.context.clear();
+
+	that.stave.setContext(that.context).draw();
 
 	voice.draw(that.context, that.stave);
 
 	// event listeners for click-to-play
-
 	that.nodes = document.querySelectorAll("#scale_" + that.id + " .vf-stavenote")
 
 	that.notes.forEach(function(note, n) {
@@ -323,19 +321,6 @@ Scale.prototype.drawIntervals = function() {
 	});
 }
 
-Scale.prototype.clear = function() {
-	const that = this;
-	if (that.nodes) {
-		that.nodes.forEach(node => {
-			node.remove();
-		});
-	}
-
-	if (that.intervalLines) {
-		that.intervalLines.remove();
-	}
-}
-
 
 Scale.prototype.playNote = function(index, duration) {
 	const that = this;
@@ -352,7 +337,7 @@ Scale.prototype.playNote = function(index, duration) {
 	let audio = note.data.audio[sample];
 	audio.play();
 
-	select(node).selectAll("path").style("fill", "red").style("stroke", "red").transition().duration(duration * 2).style("fill", "black").style("stroke", "black");
+	select(node).selectAll("path").style("fill", STYLE_COLORS.green).style("stroke", STYLE_COLORS.green).transition().duration(duration * 2).style("fill", "black").style("stroke", "black");
 }
 
 Scale.prototype.playScale = function(tempo, duration) {

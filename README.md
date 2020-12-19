@@ -26,6 +26,10 @@ You can format them all with `./samples/format.sh`. This will create three sampl
 
 + The tones are modified versions of the high-quality, freely available samples from the [Univerity of Iowa Electronic Music Studios](http://theremin.music.uiowa.edu/MISpiano.html).
 
+## Theory
+
++ [Wikipedia on 'Maximally Even' Scales](https://en.wikipedia.org/wiki/Maximal_evenness)
+
 ## The piano keyboard
 
 The spacing of the black keys is available [here](http://www.quadibloc.com/other/cnv05.htm);
@@ -35,6 +39,7 @@ The spacing of the black keys is available [here](http://www.quadibloc.com/other
 
 -- Control panel
 -- Keyboard
--- Show intervals
 -- Guess when F should be E#, etc.
 -- Search by name
+-- Add more names
+-- Interactive adjustment
