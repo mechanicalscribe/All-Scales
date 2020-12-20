@@ -1,79 +1,150 @@
 [
 	{
-		"scale_number": "1",   
 		"name": "Chromatic Scale",
 		"id": "chromatic",
-		"source": "https://hellomusictheory.com/learn/chromatic-scale/"
+		"scale_number": "1",
+		"slug": "0_1_1_1_1_1_1_1_1_1_1_1_1",
+		"attribution": {
+			"source": "https://hellomusictheory.com/learn/chromatic-scale/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "687", 
 		"name": "Major Scale",
-		"id": "major"
+		"id": "major",
+		"scale_number": "687",
+		"slug": "0_2_2_1_2_2_2_1",
+		"attribution": {
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "732", 
 		"name": "Pentatonic Major Scale",
-		"id": "major_pentatonic"
+		"id": "major_pentatonic",
+		"scale_number": "732",
+		"slug": "0_2_2_3_2_3",
+		"attribution": {
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "619", 
 		"name": "Natural Minor Scale",
 		"id": "natural_minor",
-		"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/"
+		"scale_number": "619",
+		"slug": "0_2_1_2_2_2_2_1",
+		"attribution": {
+			"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "615", 
 		"name": "Melodic Minor Scale",
 		"id": "melodic_minor",
-		"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/"
+		"scale_number": "615",
+		"slug": "0_2_1_2_2_1_2_2",
+		"attribution": {
+			"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "616", 
 		"name": "Harmonic Minor Scale",
 		"id": "harmonic_minor",
-		"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/"
+		"scale_number": "616",
+		"slug": "0_2_1_2_2_1_3_1",
+		"attribution": {
+			"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "618", 
 		"name": "Dorian Scale",
 		"id": "diantonic",
-		"source": "https://www.simplifyingtheory.com/music-modes/"
+		"scale_number": "618",
+		"slug": "0_2_1_2_2_2_1_2",
+		"attribution": {
+			"source": "https://www.simplifyingtheory.com/music-modes/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "385", 
 		"name": "Phrygian Scale",
 		"id": "phrygian",
-		"source": "https://www.simplifyingtheory.com/music-modes/"
+		"scale_number": "385",
+		"slug": "0_1_2_2_2_1_2_2",
+		"attribution": {
+			"source": "https://www.simplifyingtheory.com/music-modes/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "707", 
 		"name": "Lydian Scale",
 		"id": "lydian",
-		"source": "https://www.simplifyingtheory.com/music-modes/"
+		"scale_number": "707",
+		"slug": "0_2_2_2_1_2_2_1",
+		"attribution": {
+			"source": "https://www.simplifyingtheory.com/music-modes/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "686", 
 		"name": "Mixolydian Scale",
 		"id": "mixolydian",
-		"source": "https://www.simplifyingtheory.com/music-modes/"
+		"scale_number": "686",
+		"slug": "0_2_2_1_2_2_1_2",
+		"attribution": {
+			"source": "https://www.simplifyingtheory.com/music-modes/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "615", 
 		"name": "Aeolian Scale",
 		"id": "aeolian",
-		"source": "https://www.simplifyingtheory.com/music-modes/"
+		"scale_number": "615",
+		"slug": "0_2_1_2_2_1_2_2",
+		"attribution": {
+			"source": "https://www.simplifyingtheory.com/music-modes/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "373", 
 		"name": "Locrian Scale",
 		"id": "locrian",
-		"source": "https://www.simplifyingtheory.com/music-modes/"
+		"scale_number": "373",
+		"slug": "0_1_2_2_1_2_2_1_1",
+		"attribution": {
+			"source": "https://www.simplifyingtheory.com/music-modes/",
+			"contributor": "Chris Wilson"
+		}
 	},
 	{
-		"scale_number": "872", 
+		"name": "Whole Tone Scale",
+		"id": "whole_tone",
+		"scale_number": "716",
+		"slug": "0_2_2_2_2_2_2",
+		"attribution": {
+			"source": "https://musicstudent101.com/67-hexatonic-scales.html",
+			"contributor": "Chris Wilson"
+		}
+	},
+	{
+		"name": "Augmented Scale",
+		"id": "augmented_symmetric",
+		"scale_number": "464",
+		"slug": "0_1_3_1_3_1_3",
+		"attribution": {
+			"source": "https://musicstudent101.com/67-hexatonic-scales.html",
+			"contributor": "Chris Wilson"
+		}
+	},
+	{
 		"name": "Hexatonic Blues Scale",
 		"id": "blues_hex",
-		"source": "https://www.piano-keyboard-guide.com/piano-blues-scales.html"
+		"scale_number": "872",
+		"slug": "0_3_2_1_1_3_2",
+		"attribution": {
+			"source": "https://www.piano-keyboard-guide.com/piano-blues-scales.html",
+			"contributor": "Chris Wilson"
+		}
 	}
 ]
-

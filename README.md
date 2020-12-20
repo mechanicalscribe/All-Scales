@@ -29,16 +29,25 @@ You can format them all with `./samples/format.sh`. This will create three sampl
 ## Theory
 
 + [Wikipedia on 'Maximally Even' Scales](https://en.wikipedia.org/wiki/Maximal_evenness)
++ [Key terms](https://musicstudent101.com/67-hexatonic-scales.html)
+	```
+	*PENTATONIC SCALE:* A five note scale.
+	*HEXATONIC SCALE:* A six note scale.
+	*HEPTATONIC SCALE:* A seven note scale.
+	*ANHEMITONIC SCALE:* A scale with no semitones.
+	*SYMMETRIC SCALE:* A scale that repeats the same pattern throughout (e.g. WHOLE TONE SCALE).
+	*CYCLIC PERMUTATION:* The act of using the same scale (collection of intervals in a given sequence) and creating another by starting the sequence on a note other than the given tonic.
+	*MODE*: A seven note scale made from a CYCLIC PERMUTATION of the MAJOR scale.
+	```
+	 
 
-## The piano keyboard
 
-The spacing of the black keys is available [here](http://www.quadibloc.com/other/cnv05.htm);
+	
 
 
 # TO DO
 
 -- Control panel
 -- Guess when F should be E#, etc.
--- Search by name
 -- Add more names
 -- Interactive adjustment

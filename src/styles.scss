@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IM+Fell+English:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans+Condensed:ital,wght@0,300;1,300&family=IM+Fell+English:ital@1&display=swap');
 
 $green: #2ed22e;
 
@@ -33,7 +33,7 @@ select {
 #scales_container {
 	width: 800px;
 	font-size: 16px;
-	font-family: Arial;
+	font-family: 'IBM Plex Sans Condensed', sans-serif;
 }
 
 #control_panel {
@@ -82,22 +82,24 @@ select {
 	padding: 5px;
 	margin-bottom: 10px;
 	position: relative;
-	font-family: 'IBM Plex Mono', monospace;;
+	font-family: 'IBM Plex Mono', monospace;
 
-	&> div {
-		line-height: 30px;
-		display: inline-block;
-		vertical-align: top;
-	}
-
-	.scale_options_toggle {
+	.scale_options_close {
 		position: absolute;
 		right: 10px;
 		top: -5px;
 	}
 
+	.scale_options_edit {
+		position: absolute;
+		right: 40px;
+		top: -5px;
+	}
+
 	.scale_option {
+		line-height: 30px;
 		display: inline-block;
+		vertical-align: top;
 		margin-right: 10px;
 
 		> div {
@@ -105,7 +107,7 @@ select {
 			display: inline-block;
 			vertical-align: top;
 		}
-	}
+	}	
 
 	.play_button {
 		font-size: 60px;
@@ -150,7 +152,9 @@ select {
 	}
 
 	.options_button {
-		font-size: 14px;
+		font-size: 22px;
+		padding: 1px 3px;
+		text-align: center;
 		display: inline-block;
 		background-color: white;
 		width: 24px;
@@ -160,8 +164,13 @@ select {
 		color: #606060;
 		border-radius: 4px;
 		line-height: 21px;
-		outline: none;
-	}	
+	}
+
+	.scale_details {
+		font-family: 'IBM Plex Sans Condensed', sans-serif;
+		font-style: italic;
+		font-size: 20px;
+	}
 }
 
 .scale {

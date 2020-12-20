@@ -12,8 +12,6 @@ const scales = require("./data/scales.json");
 const scale_names = require("./data/scale_names.json");
 const NOTES = require("./data/notes.json");
 
-// console.log(scales);
-
 const template = require("./src/scale.ejs");
 import STYLE_COLORS from "./src/styles.scss";
 
@@ -22,13 +20,13 @@ const byName = {};
 const byNumber = {};
 
 scale_names.forEach(d => {
-	byID[d.id] = +d.scale_number - 1;
-	byName[d.name] = +d.scale_number - 1;
-	byNumber[d.scale_number] = d.name;
-});
+	d.intervals = scales[+d.scale_number - 1];
 
-// console.log(byID);
-// console.log(byNumber);
+	byID[d.id] = d;
+	byName[d.name] = d;
+	byNumber[d.scale_number] = byNumber[d.scale_number] || [];
+	byNumber[d.scale_number].push(d);
+});
 
 const ROOTS = {
 	"C":  [ 0, "flat"   ],
@@ -49,6 +47,9 @@ const ROOTS = {
 	"Bb": [ 10, "flat"   ],
 	"B":  [ 11, "sharp"  ]
 };
+
+// track all the scales on the page
+let REGISTRY = {};
 
 NOTES.forEach(function(d, i) {
 	let noteName = d.name;
@@ -134,19 +135,9 @@ function Scale(scale_number, root, prepend) {
 		that.drawScale(+this.value - 1);
 	});
 
-	that.el.select(".options_button").on("click", function() {
+	that.el.select(".scale_options_close").on("click", function() {
 		scaleContainer.removeChild(that.div);
-		/*
-		if (this.dataset.open === "false") {
-			that.el.select(".scale_options").style("display", "block");
-			this.innerHTML = "&minus;";
-			this.dataset.open = "true";
-		} else {
-			that.el.select(".scale_options").style("display", "none");
-			this.innerHTML = "&plus;";
-			this.dataset.open = "false";			
-		}
-		*/
+		delete REGISTRY[that.id];
 	});
 
 	const container = document.querySelector("#scale_" + that.id + " .staff");
@@ -175,32 +166,60 @@ function Scale(scale_number, root, prepend) {
 	if (typeof scale_number != "undefined") {
 		that.drawScale(scale_number, root)
 	}
+
+	REGISTRY[that.id] = that;	
 }
 
 
 Scale.prototype.drawScale = function(scale_number, root) {
+	const that = this;
+
 	if (typeof scale_number == "undefined") {
 		console.log("Please pass a `scale_number` for this new scale");
 		return;
 	}
 
-	if (typeof scale_number == "string") {
-		scale_number = +byID[scale_number];
-		if (!scale_number) {
-			console.log("Couldn't find a scale by that name");
+	that.scale_name = null;
+	that.scale_number = null;
+	that.alt_text = null;
+
+	// if it's an id
+	if (typeof scale_number === "string") {
+		that.scale_number = +byID[scale_number].scale_number - 1;
+
+		if (!that.scale_number) {
+			console.log("Couldn't find a scale by that ID");
 			return;
 		}
-	}
 
-	const that = this;
+		that.scale_name = byID[scale_number].name;
+	} else if (typeof scale_number === "number") {
+		that.scale_number = scale_number;
+
+		let info = byNumber[+that.scale_number + 1];
+
+		if (info) {
+			that.scale_name = info[0].name;
+		}
+
+	} else {
+		console.log("Didn't recognize identifier", scale_number);
+		return;
+	}	
 
 	if (root) {
 		that.root = root; // already set to 'C' in constructor if unspecified
 	}
 
-	that.scale_number = scale_number;
+	if (byNumber[that.scale_number + 1]) {
+		let all_names = byNumber[that.scale_number + 1].map(d => d.name);
 
-	that.scale_name = byNumber[scale_number + 1] ? byNumber[scale_number + 1] : null;
+		if (all_names.length > 1) {
+			let alt_names = all_names.filter(d => d != that.scale_name);
+			that.alt_text = `This is also known as the "${ alt_names.join(",") }"`
+		}
+	};
+
 	that.slug = that.scale_number + "_" + that.root.replace("#", "s");
 
 	that.rootDropdown.setValue(that.root.replace("#", "s"));
@@ -214,7 +233,13 @@ Scale.prototype.drawScale = function(scale_number, root) {
 		that.el.select(".scale_title").html(`<strong>Scale #${ that.scale_number + 1 } in ${ that.root }`);	
 	}
 
-	that.intervals = scales[scale_number];
+	if (that.alt_text) {
+		that.el.select(".scale_details").html(that.alt_text);
+	} else {
+		that.el.select(".scale_details").html("");
+	}
+
+	that.intervals = scales[that.scale_number];
 
 	// https://stackoverflow.com/questions/20477177/creating-an-array-of-cumulative-sum-in-javascript
 	that.scale = that.intervals.reduce(function(r, a) {
@@ -276,7 +301,6 @@ Scale.prototype.drawScale = function(scale_number, root) {
 	});
 
 	that.drawIntervals();
-
 }
 
 Scale.prototype.drawIntervals = function() {
@@ -390,11 +414,12 @@ select("#random_scale").on("click", function() {
 
 selections.makeAutocompleteBox("#scale_by_name", Object.keys(byName), {
 	onSelect: function(name) {
-		let new_scale = new Scale(byName[name], "C", true);	
+		let new_scale = new Scale(byName[name].id, "C", true);	
 	},
 	onError: function(value) {
 		console.log("No matching name for", value);
-	}
+	},
+	clearAfter: true
 });
 
 select("#scale_by_name input").attr("spellcheck", "false");
