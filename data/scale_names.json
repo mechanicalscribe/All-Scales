@@ -1,9 +1,79 @@
-{
-	"1":   [ "Chromatic Scale", "chromatic" ],
-	"615": [ "Melodic Minor Scale", "melodic_minor" ],
-	"616": [ "Harmonic Minor Scale", "harmonic_minor" ],
-	"618": [ "Dorian Scale", "diantonic" ],
-	"619": [ "Natural Minor Scale", "natural_minor" ],
-	"687": [ "Major Scale", "major" ],
-	"872": [ "Hexantoic Blues Scale", "blues" ]
-}
+[
+	{
+		"scale_number": "1",   
+		"name": "Chromatic Scale",
+		"id": "chromatic",
+		"source": "https://hellomusictheory.com/learn/chromatic-scale/"
+	},
+	{
+		"scale_number": "687", 
+		"name": "Major Scale",
+		"id": "major"
+	},
+	{
+		"scale_number": "732", 
+		"name": "Pentatonic Major Scale",
+		"id": "major_pentatonic"
+	},
+	{
+		"scale_number": "619", 
+		"name": "Natural Minor Scale",
+		"id": "natural_minor",
+		"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/"
+	},
+	{
+		"scale_number": "615", 
+		"name": "Melodic Minor Scale",
+		"id": "melodic_minor",
+		"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/"
+	},
+	{
+		"scale_number": "616", 
+		"name": "Harmonic Minor Scale",
+		"id": "harmonic_minor",
+		"source": "https://www.musicnotes.com/now/musictheory/the-3-types-of-minor-scales-in-music/"
+	},
+	{
+		"scale_number": "618", 
+		"name": "Dorian Scale",
+		"id": "diantonic",
+		"source": "https://www.simplifyingtheory.com/music-modes/"
+	},
+	{
+		"scale_number": "385", 
+		"name": "Phrygian Scale",
+		"id": "phrygian",
+		"source": "https://www.simplifyingtheory.com/music-modes/"
+	},
+	{
+		"scale_number": "707", 
+		"name": "Lydian Scale",
+		"id": "lydian",
+		"source": "https://www.simplifyingtheory.com/music-modes/"
+	},
+	{
+		"scale_number": "686", 
+		"name": "Mixolydian Scale",
+		"id": "mixolydian",
+		"source": "https://www.simplifyingtheory.com/music-modes/"
+	},
+	{
+		"scale_number": "615", 
+		"name": "Aeolian Scale",
+		"id": "aeolian",
+		"source": "https://www.simplifyingtheory.com/music-modes/"
+	},
+	{
+		"scale_number": "373", 
+		"name": "Locrian Scale",
+		"id": "locrian",
+		"source": "https://www.simplifyingtheory.com/music-modes/"
+	},
+	{
+		"scale_number": "872", 
+		"name": "Hexatonic Blues Scale",
+		"id": "blues_hex",
+		"source": "https://www.piano-keyboard-guide.com/piano-blues-scales.html"
+	}
+]
+

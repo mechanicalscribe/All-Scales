@@ -12,18 +12,23 @@ const scales = require("./data/scales.json");
 const scale_names = require("./data/scale_names.json");
 const NOTES = require("./data/notes.json");
 
-console.log(scales);
+// console.log(scales);
 
 const template = require("./src/scale.ejs");
 import STYLE_COLORS from "./src/styles.scss";
 
-console.log(STYLE_COLORS);
+const byID = {};
+const byName = {};
+const byNumber = {};
 
-const byName = {}
-
-Object.entries(scale_names).forEach(d => {
-	byName[d[1][1]] = +d[0] - 1;
+scale_names.forEach(d => {
+	byID[d.id] = +d.scale_number - 1;
+	byName[d.name] = +d.scale_number - 1;
+	byNumber[d.scale_number] = d.name;
 });
+
+// console.log(byID);
+// console.log(byNumber);
 
 const ROOTS = {
 	"C":  [ 0, "flat"   ],
@@ -86,7 +91,7 @@ const INTERVAL_COLORS = [
 
 let scaleContainer = document.querySelector("#scales");
 
-function Scale(scale_number, root) {
+function Scale(scale_number, root, prepend) {
 	const that = this;
 	that.id = nanoid();
 	that.root = root || "C";
@@ -98,7 +103,11 @@ function Scale(scale_number, root) {
 	div.classList.add("scale");
 	div.innerHTML = template();
 
-	scaleContainer.append(div);
+	if (prepend) {
+		scaleContainer.prepend(div);
+	} else {
+		scaleContainer.append(div);
+	}
 
 	// build control panel
 	let selectItems = Object.keys(ROOTS).map(d => {
@@ -176,7 +185,7 @@ Scale.prototype.drawScale = function(scale_number, root) {
 	}
 
 	if (typeof scale_number == "string") {
-		scale_number = +byName[scale_number];
+		scale_number = +byID[scale_number];
 		if (!scale_number) {
 			console.log("Couldn't find a scale by that name");
 			return;
@@ -190,7 +199,8 @@ Scale.prototype.drawScale = function(scale_number, root) {
 	}
 
 	that.scale_number = scale_number;
-	that.scale_name = scale_names[String(scale_number + 1)] ? scale_names[String(scale_number + 1)][0] : null
+
+	that.scale_name = byNumber[scale_number + 1] ? byNumber[scale_number + 1] : null;
 	that.slug = that.scale_number + "_" + that.root.replace("#", "s");
 
 	that.rootDropdown.setValue(that.root.replace("#", "s"));
@@ -198,7 +208,11 @@ Scale.prototype.drawScale = function(scale_number, root) {
 
 	// add name to template
 	// `scale_number` is 0-indexed, so add one
-	that.el.select(".scale_title").html(`<strong>Scale #${ that.scale_number + 1 }` + (that.scale_name ? (': </strong>&ldquo;' + that.scale_name + '&rdquo;') : "") + " in " + that.root);	
+	if (that.scale_name) {
+		that.el.select(".scale_title").html(`<strong>Scale #${ that.scale_number + 1 }: </strong>&ldquo;${ that.scale_name }&rdquo; in ${ that.root }`);	
+	} else {
+		that.el.select(".scale_title").html(`<strong>Scale #${ that.scale_number + 1 } in ${ that.root }`);	
+	}
 
 	that.intervals = scales[scale_number];
 
@@ -358,6 +372,34 @@ Scale.prototype.playScale = function(tempo, duration) {
 	}
 }
 
+// page-wide controls
+function randomN(n) {
+	return Math.floor(n * Math.random());
+}
+
+function selectRandom(array) {
+	return array[randomN(array.length)];
+}
+
+select("#random_scale").on("click", function() {
+	console.log("Hello");
+	let scale_number = randomN(scales.length);
+	let root = selectRandom(Object.keys(ROOTS));
+	let new_scale = new Scale(scale_number, root, true);	
+});
+
+selections.makeAutocompleteBox("#scale_by_name", Object.keys(byName), {
+	onSelect: function(name) {
+		let new_scale = new Scale(byName[name], "C", true);	
+	},
+	onError: function(value) {
+		console.log("No matching name for", value);
+	}
+});
+
+select("#scale_by_name input").attr("spellcheck", "false");
+
+
 let scale0 = new Scale();
 let scale1 = new Scale("major", "C");
 let scale2 = new Scale(730, "B");
@@ -366,6 +408,6 @@ let scale2 = new Scale(730, "B");
 // drawScale("minor", "Eb");
 
 
-scale0.drawScale("blues", "F")
+scale0.drawScale("blues_hex", "F")
 
 scale1.drawScale(100, "D#")

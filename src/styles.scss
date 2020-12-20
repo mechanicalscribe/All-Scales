@@ -6,25 +6,6 @@ $green: #2ed22e;
 	green: $green;
 }
 
-body {
-	font-family: Arial;
-	font-size: 16px;
-}
-
-#scales {
-	width: 800px;
-}
-
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-
 button {
 	cursor: pointer;
 	outline: none;
@@ -40,7 +21,44 @@ select {
 	outline: none;
 }
 
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+#scales_container {
+	width: 800px;
+	font-size: 16px;
+	font-family: Arial;
+}
+
 #control_panel {
+	border: 1px solid #606060;
+	border-radius: 5px;
+	padding: 10px;
+
+	.control_option {
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
+		margin-right: 10px;
+
+		input {
+			border: 2px solid #606060;
+			border-radius: 3px;
+			font-size: 24px;
+			padding: 4px;
+		}
+	}
+
+	.control_label {
+		margin-top: 4px;
+	}
+
 	.control_button {
 		font-size: 30px;
 		display: inline-block;
@@ -50,15 +68,13 @@ select {
 		border-radius: 4px;
 		padding-bottom: 5px;
 		line-height: 25px;
+		border: 2px solid #606060;
+		border-radius: 3px;
 	}
 
-	.control_toggle {
-
+	.control_input {
+		line-height: 25px;		
 	}
-
-	.control_panel {
-		background-color: #EEE;
-	}	
 }
 
 .scale_options {

@@ -38,7 +38,6 @@ The spacing of the black keys is available [here](http://www.quadibloc.com/other
 # TO DO
 
 -- Control panel
--- Keyboard
 -- Guess when F should be E#, etc.
 -- Search by name
 -- Add more names

@@ -2,18 +2,22 @@
 <html class="no-js" lang="">
 
 <head>
-  <meta charset="utf-8">
-  <title>Every Scale</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
+	<title>Every Scale</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
 	<div id="scales_container" class="noselect">
-		<div class="scale_options" id="control_panel">
-			<div class="scale_option">
-				<div class="option_label">RANDOM SCALE </div>
-				<button class="options_button" id="random_scale">&circlearrowright;</button>
+		<div id="control_panel">
+			<div class="control_option">
+				<button class="control_button" id="random_scale">&circlearrowright;</button>
+				<div class="control_label">RANDOM</div>
+			</div>
+			<div class="control_option">
+				<div id="scale_by_name"></div>
+				<div class="control_label">BY NAME</div>
 			</div>
 		</div>
 		<div id="scales"></div>
